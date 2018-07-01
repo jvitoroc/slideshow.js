@@ -1,11 +1,14 @@
 let element = document.getElementById('data-simple-slide')
 
-function SlideShow(element, images, delay){
+function SlideShow(element, images, delay, transition){
+    element.classList.add(transition);
+    this.element = element;
+    this.transition = transition;
     this.element = element;
     this.delay = delay;
     this.playing = false;
     this.numberOfSlides = this._populate(images);
-    this.initialState = [this.numberOfSlides-1, 0];
+    this.initialState = [this.numberOfSlides-1, 0, 1];
     this.currentState = Array.from(this.initialState);
     this.next();
 
@@ -33,15 +36,43 @@ SlideShow.prototype._populate = function(images){
 }
 
 SlideShow.prototype.next = function(){
+    if(this.transition === 'card'){
+        this._nextCard();
+        return;
+    }
+
     if(this.numberOfSlides === 0)
         return;
-    this.slides[this.currentState[0]].classList.remove('active');
-    this.slides[this.currentState[1]].classList.add('active');
+    this.slides[this.currentState[0]].classList.remove('back');
+    this.slides[this.currentState[1]].classList.add('front');
     if(this.currentState[1] === this.numberOfSlides - 1)
         this.currentState = Array.from(this.initialState);
     else{
         this.currentState[0] = this.currentState[1]
         this.currentState[1] += 1;
+    }
+}
+
+SlideShow.prototype._nextCard = function(){
+    if(this.numberOfSlides === 0)
+        return;
+    this.slides[this.currentState[0]].className = "";
+    this.slides[this.currentState[0]].classList.add('previous-front');
+
+    this.slides[this.currentState[1]].className = "";
+    this.slides[this.currentState[1]].classList.add('front');
+
+    this.slides[this.currentState[2]].className = "";
+    this.slides[this.currentState[2]].classList.add('back');
+    this._continue();
+}
+
+SlideShow.prototype._continue = function(){
+    for(let i = 0; i < this.numberOfSlides; i++){
+        if(this.currentState[i] === this.numberOfSlides-1)
+            this.currentState[i] = 0;
+        else
+            this.currentState[i] += 1;
     }
 }
 
@@ -83,7 +114,8 @@ SlideShow.prototype.isPlaying = function(){
     return this.playing !== false;
 }
 
-let slideShow = new SlideShow(element, false, 2000);
+let slideShow = new SlideShow(element, false, 2000, 'card');
+slideShow.play();
 
 slideShow.onSlideChange((currentSlide)=>{
     console.log(currentSlide);

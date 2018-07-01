@@ -20,7 +20,38 @@
     transition: opacity 0.5s;
 }
 
-
-[data-simple-slide] > li:not(.active){
+[data-simple-slide].appear > li{
     opacity: 0;
+    transition: opacity 0.5s;
+}
+
+[data-simple-slide].appear > li.active{
+    opacity: 1;
+}
+
+[data-simple-slide].card{
+    perspective: 600px;
+}
+
+[data-simple-slide].card > li{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backface-visibility: hidden;
+    display: none;
+    transition: 1s;
+}
+
+[data-simple-slide].card > li.back{
+    transform: rotateY(-180deg);
+    display: block;
+}
+
+[data-simple-slide].card > li.previous-front{
+    transform: rotateY(180deg);
+    display: block;
+}
+
+[data-simple-slide].card > li.front{
+    display: block;
 }
