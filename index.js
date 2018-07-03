@@ -96,6 +96,13 @@ SlideShow.prototype.setTransitionDelay = function(transition, immediately = true
     }
 }
 
+SlideShow.prototype.setDelay = function(delay, immediately = true){
+    this.delay = delay;
+    if(immediately){
+        this.refresh();
+    }
+}
+
 SlideShow.prototype.refresh = function(){
     if(this.playing !== false){
         clearInterval(this.playing);
