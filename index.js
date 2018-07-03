@@ -5,31 +5,40 @@ function SlideShow(element, images, delay){
     this.delay = delay;
     this.playing = false;
     this.numberOfSlides = this._populate(images);
-    this.initialState = [this.numberOfSlides-1, 0];
-    this.currentState = Array.from(this.initialState);
-    this.next();
+    this.currentState = [0, 1];
 
     this.slideChangeCallbacks = [];
 }
 
 SlideShow.prototype._populate = function(images){
+    let slides;
+
     if(images === true)
-        images = JSON.parse(element.getAttribute('data-simple-slide-imgs'));
+        slides = JSON.parse(element.getAttribute('data-simple-slide-imgs'));
     else if(images === false){
-        images = element.querySelectorAll("li");
-        this.slides = images;
-        return images.length;
+        slides = element.querySelectorAll("li");
+    }else{
+        slides = images;
     }
-        
-    this.slides = [];
-    images.forEach((img)=>{
-        let slide = document.createElement('li');
-        slide.style.backgroundImage = 'url('+img+')';
-        this.element.appendChild(slide);
-        this.slides.push(slide);
+
+    let buffer;
+    this.slides = slides.map((slide)=>{
+        if(images === true || images !== false){
+            buffer = document.createElement('li');
+            buffer.style.backgroundImage = 'url('+slide+')';
+        }
+        return buffer;
     });
+
+    for(let i = 0; i < this.slides.length; i++){
+        if(i == 0)
+            this.slides[0].classList.add('active');
+        if(images !== false)
+            this.element.appendChild(this.slides[i]);
+    }
     
-    return images.length;
+    this.element.classList.add("transition");
+    return this.slides.length;
 }
 
 SlideShow.prototype.next = function(){
@@ -37,11 +46,15 @@ SlideShow.prototype.next = function(){
         return;
     this.slides[this.currentState[0]].classList.remove('active');
     this.slides[this.currentState[1]].classList.add('active');
-    if(this.currentState[1] === this.numberOfSlides - 1)
-        this.currentState = Array.from(this.initialState);
-    else{
-        this.currentState[0] = this.currentState[1]
-        this.currentState[1] += 1;
+    this._continue();
+}
+
+SlideShow.prototype._continue = function(){
+    for(let i = 0; i < this.numberOfSlides; i++){
+        if(this.currentState[i] === this.numberOfSlides-1)
+            this.currentState[i] = 0;
+        else
+            this.currentState[i] += 1;
     }
 }
 
@@ -83,7 +96,8 @@ SlideShow.prototype.isPlaying = function(){
     return this.playing !== false;
 }
 
-let slideShow = new SlideShow(element, false, 2000);
+let slideShow = new SlideShow(element, true, 1000);
+slideShow.play();
 
 slideShow.onSlideChange((currentSlide)=>{
     console.log(currentSlide);

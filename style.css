@@ -2,7 +2,7 @@
     overflow: hidden;
     padding: 0;
     list-style: none;
-    width: 100%;
+    width: 500px;
     height: 500px;
     position: relative;
 }
@@ -16,11 +16,15 @@
     background-size: cover;
     background-position: center center;
     overflow: hidden;
+    display: none;
+}
+
+[data-simple-slide].transition > li{
+    display: block;
     opacity: 1;
     transition: opacity 0.5s;
 }
 
-
-[data-simple-slide] > li:not(.active){
+[data-simple-slide].transition > li:not(.active){
     opacity: 0;
 }
